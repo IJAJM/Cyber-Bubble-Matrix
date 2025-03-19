@@ -1,5 +1,3 @@
-### **README.md**  
-```md
 # Cyber Bubble Matrix  
 
 **Cyber Bubble Matrix** adalah game berbasis web bertema cyber-tech yang memberikan pengalaman interaktif dengan bubble-clicking yang memuaskan.  
@@ -12,7 +10,7 @@
 
 ## 🚀 Cara Menjalankan Game  
 1. **Clone repo ini**:  
-   ```sh
+   ```
    git clone https://github.com/username/Cyber-Bubble-Matrix.git
    ```  
 2. **Buka file `index.html` di browser**.  
