@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Bubble Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 25%, #1e293b 100%);
+        }
+        
+        .cyber-border {
+            border: 2px solid #00f7ff;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, #00f7ff33, transparent);
+            animation: cyberScan 4s linear infinite;
+        }
+
+        .bubble {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(0, 247, 255, 0.4) 0%, 
+                rgba(0, 82, 121, 0.3) 50%, 
+                rgba(0, 20, 31, 0.8) 100%);
+            border-radius: 50%;
+            border: 1px solid #00f7ff33;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle, 
+                rgba(0, 247, 255, 0.3) 0%, 
+                transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.5),
+                        inset 0 0 10px rgba(0, 247, 255, 0.2);
+        }
+
+        .bubble:hover::before {
+            opacity: 1;
+        }
+
+        .bubble.popped {
+            transform: scale(0.7);
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 0, 106, 0.2) 0%, 
+                rgba(133, 0, 62, 0.3) 50%, 
+                rgba(31, 0, 20, 0.8) 100%);
+            box-shadow: 0 0 20px rgba(255, 0, 106, 0.3);
+            opacity: 0.7;
+        }
+
+        @keyframes cyberScan {
+            0% { transform: rotate(0deg) translate(-50%, -50%); }
+            100% { transform: rotate(360deg) translate(-50%, -50%); }
+        }
+
+        .digital-font {
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #00f7ff;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-4xl font-bold mb-6 digital-font text-cyan-400 glow">
+        CYBER BUBBLE MATRIX
+    </h1>
+
+    <div class="mb-6 flex items-center gap-6">
+        <p class="text-xl digital-font">
+            SCORE: <span id="score" class="text-green-400">0</span>
+        </p>
+        <button id="reset-button" class="px-6 py-2 bg-transparent border-2 border-cyan-400 text-cyan-400 rounded-none digital-font hover:bg-cyan-400/10 hover:border-cyan-300 hover:text-cyan-300 transition-all duration-300">
+            SYSTEM RESET
+        </button>
+    </div>
+
+    <div id="bubble-wrap" class="cyber-border grid grid-cols-8 gap-2 p-6 bg-black/30 backdrop-blur-sm shadow-2xl">
+        <!-- Bubbles will be generated here -->
+    </div>
+
+    <footer class="mt-8 text-sm text-cyan-400/80 digital-font">
+        CYBER SYSTEMS v1.3.37 © 2025 <a href="https://saweria.co/ijajkeyboard" class="hover:text-cyan-300 hover:underline">IJAJ.INDUSTRIES</a>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const wrap = document.getElementById("bubble-wrap");
+            const resetButton = document.getElementById("reset-button");
+            const scoreDisplay = document.getElementById("score");
+            const bubbleCount = 64;
+            let score = 0;
+            
+         
+            const popSound = new Audio("/Futuristic-click.mp3");
+            popSound.volume = 0.7;
+
+            function createBubbles() {
+                wrap.innerHTML = "";
+                score = 0;
+                scoreDisplay.textContent = score;
+
+                for (let i = 0; i < bubbleCount; i++) {
+                    const bubble = document.createElement("div");
+                    bubble.className = "bubble";
+                    
+                    // Tambah efek partikel saat diklik
+                    bubble.addEventListener("click", () => {
+                        if (!bubble.classList.contains("popped")) {
+                            bubble.classList.add("popped");
+                            
+                            // Mainkan suara dengan reset waktu
+                            popSound.currentTime = 0;
+                            popSound.play();
+                            
+                            // Animasi partikel
+                            const particles = document.createElement("div");
+                            particles.className = "absolute inset-0 animate-ping";
+                            particles.style.background = "radial-gradient(circle, rgba(0,247,255,0.5) 0%, transparent 70%)";
+                            bubble.appendChild(particles);
+                            
+                            score++;
+                            scoreDisplay.textContent = score;
+                            
+                            // Hapus partikel setelah animasi
+                            setTimeout(() => particles.remove(), 500);
+                        }
+                    });
+                    
+                    wrap.appendChild(bubble);
+                }
+            }
+
+            resetButton.addEventListener("click", () => {
+                if(confirm("INITIATE SYSTEM RESET?")) {
+                    createBubbles();
+                }
+            });
+
+            // Tambah efek hover untuk mobile
+            wrap.addEventListener("touchstart", (e) => {
+                if(e.target.classList.contains("bubble")) {
+                    e.target.classList.add("hover");
+                }
+            }, { passive: true });
+
+            wrap.addEventListener("touchend", (e) => {
+                if(e.target.classList.contains("bubble")) {
+                    e.target.classList.remove("hover");
+                }
+            }, { passive: true });
+
+            createBubbles();
+        });
+    </script>
+</body>
+</html>
